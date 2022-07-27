@@ -20,7 +20,7 @@ unsigned char getMemory(struct Chip8Memory *memory, int index)
     }
     else
     {
-        printf("Error: index is not within bounds");
+        printf("Error: memory index is not within bounds");
         return 0;
     }
 }
@@ -33,6 +33,6 @@ void setMemory(struct Chip8Memory *memory, int index, unsigned char val)
     }
     else
     {
-        printf("Error: index is not within bounds");
+        printf("Error: memory index is not within bounds");
     }
 }

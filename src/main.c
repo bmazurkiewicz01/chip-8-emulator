@@ -6,8 +6,12 @@
 int main(int argc, char **argv)
 {
     struct Chip8 chip8;
-    setMemory(&chip8.memory, 0, 'Z');
-    printf("%c\n", getMemory(&chip8.memory, 0));
+    chip8.registers.SP = 0;
+    pushStack(&chip8, 0xff);
+    pushStack(&chip8, 0xaa);
+
+    printf("%x\n", popStack(&chip8));
+    printf("%x\n", popStack(&chip8));
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -18,7 +22,6 @@ int main(int argc, char **argv)
         CHIP8_WIDTH * EMULATOR_WINDOW_MULTIPLIER,
         CHIP8_HEIGHT * EMULATOR_WINDOW_MULTIPLIER,
         SDL_WINDOW_SHOWN);
-    printf("Hello World!\n");
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_TEXTUREACCESS_TARGET);
     while (1)
