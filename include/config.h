@@ -11,5 +11,7 @@
 #define CHIP8_REGISTERS_SIZE 16
 #define CHIP8_STACK_SIZE 16
 
+#define CHIP8_TOTAL_KEYS 16
+
 
 #endif

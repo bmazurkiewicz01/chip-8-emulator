@@ -1,17 +1,20 @@
+#include <stdbool.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "SDL.h"
 #include "chip8.h"
+#include "chip8keyboard.h"
+
+const char keyboardMap[CHIP8_TOTAL_KEYS] = {
+    SDLK_0, SDLK_1, SDLK_2, SDLK_3, SDLK_4,
+    SDLK_5, SDLK_6, SDLK_7, SDLK_8, SDLK_9,
+    SDLK_a, SDLK_b, SDLK_c, SDLK_d, SDLK_e, SDLK_f};
 
 int main(int argc, char **argv)
 {
     struct Chip8 chip8;
-    chip8.registers.SP = 0;
-    pushStack(&chip8, 0xff);
-    pushStack(&chip8, 0xaa);
-
-    printf("%x\n", popStack(&chip8));
-    printf("%x\n", popStack(&chip8));
+    bool isRunning = true;
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -24,14 +27,43 @@ int main(int argc, char **argv)
         SDL_WINDOW_SHOWN);
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_TEXTUREACCESS_TARGET);
-    while (1)
+
+    while (isRunning)
     {
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_QUIT)
+            switch (event.type)
             {
-                goto out;
+            case SDL_QUIT:
+                isRunning = false;
+                break;
+
+            case SDL_KEYDOWN:
+            {
+                char key = event.key.keysym.sym;
+                int vKey = mapKey(keyboardMap, key);
+                printf("vKey = %x is down\n", vKey);
+                if (vKey != -1)
+                {
+                    holdKeyDown(&chip8.keyboard, vKey);
+                }
+
+                break;
+            }
+
+            case SDL_KEYUP:
+                char key = event.key.keysym.sym;
+                int vKey = mapKey(keyboardMap, key);
+                printf("vKey = %x is up\n", vKey);
+                if (vKey != -1)
+                {
+                    releaseKey(&chip8.keyboard, vKey);
+                }
+                break;
+
+            default:
+                break;
             }
         }
 
@@ -47,9 +79,10 @@ int main(int argc, char **argv)
 
         SDL_RenderFillRect(renderer, &r);
         SDL_RenderPresent(renderer);
+        usleep(10000);
     }
 
-out:
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     return 0;
 }
