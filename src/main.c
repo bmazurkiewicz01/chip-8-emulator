@@ -5,6 +5,7 @@
 #include "SDL.h"
 #include "chip8.h"
 #include "chip8keyboard.h"
+#include "chip8screen.h"
 
 const char keyboardMap[CHIP8_TOTAL_KEYS] = {
     SDLK_0, SDLK_1, SDLK_2, SDLK_3, SDLK_4,
@@ -16,8 +17,14 @@ int main(int argc, char **argv)
     struct Chip8 chip8;
     bool isRunning = true;
 
-    SDL_Init(SDL_INIT_EVERYTHING);
+    initChip8(&chip8);
 
+    drawSprite(&chip8.screen, 0, 0, &chip8.memory.memory[0x05], 5);
+    drawSprite(&chip8.screen, 20, 20, &chip8.memory.memory[0x0A], 5);
+    drawSprite(&chip8.screen, 40, 20, &chip8.memory.memory[60], 5);
+    drawSprite(&chip8.screen, 62, 30, &chip8.memory.memory[65], 5);
+
+    SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window *window = SDL_CreateWindow(
         EMULATOR_WINDOW_TITLE,
         SDL_WINDOWPOS_UNDEFINED,
@@ -69,16 +76,27 @@ int main(int argc, char **argv)
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
-
-        SDL_Rect r;
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-        r.x = 320;
-        r.y = 160;
-        r.w = 100;
-        r.h = 100;
 
-        SDL_RenderFillRect(renderer, &r);
+        for (int x = 0; x < CHIP8_WIDTH; x++)
+        {
+            for (int y = 0; y < CHIP8_HEIGHT; y++)
+            {
+                if (isScreenSet(&chip8.screen, x, y))
+                {
+                    SDL_Rect r;
+
+                    r.x = x * EMULATOR_WINDOW_MULTIPLIER;
+                    r.y = y * EMULATOR_WINDOW_MULTIPLIER;
+                    r.w = EMULATOR_WINDOW_MULTIPLIER;
+                    r.h = EMULATOR_WINDOW_MULTIPLIER;
+
+                    SDL_RenderFillRect(renderer, &r);
+                }
+            }
+        }
         SDL_RenderPresent(renderer);
+
         usleep(10000);
     }
 
