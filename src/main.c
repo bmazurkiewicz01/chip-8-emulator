@@ -19,7 +19,10 @@ int main(int argc, char **argv)
     bool isRunning = true;
 
     initChip8(&chip8);
-    chip8.registers.ST = 20;
+    chip8.registers.ST = 255;
+
+    struct Beeper beeper;
+    initBeeper(&beeper);
 
     drawSprite(&chip8.screen, 0, 0, &chip8.memory.memory[0x05], 5);
     drawSprite(&chip8.screen, 20, 20, &chip8.memory.memory[0x0A], 5);
@@ -107,7 +110,7 @@ int main(int argc, char **argv)
 
         if (chip8.registers.ST > 0)
         {
-            beep(chip8.registers.ST);
+            beep(&beeper, chip8.registers.ST);
             chip8.registers.ST = 0;
         }
         usleep(20 * 1000);
@@ -115,5 +118,6 @@ int main(int argc, char **argv)
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    destroyBeeper(&beeper);
     return 0;
 }
