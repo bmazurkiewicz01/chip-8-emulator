@@ -6,6 +6,7 @@
 #include "chip8.h"
 #include "chip8keyboard.h"
 #include "chip8screen.h"
+#include "chip8beep.h"
 
 const char keyboardMap[CHIP8_TOTAL_KEYS] = {
     SDLK_0, SDLK_1, SDLK_2, SDLK_3, SDLK_4,
@@ -18,6 +19,7 @@ int main(int argc, char **argv)
     bool isRunning = true;
 
     initChip8(&chip8);
+    chip8.registers.ST = 20;
 
     drawSprite(&chip8.screen, 0, 0, &chip8.memory.memory[0x05], 5);
     drawSprite(&chip8.screen, 20, 20, &chip8.memory.memory[0x0A], 5);
@@ -97,7 +99,18 @@ int main(int argc, char **argv)
         }
         SDL_RenderPresent(renderer);
 
-        usleep(10000);
+        if (chip8.registers.DT > 0)
+        {
+            usleep(100 * 1000);
+            chip8.registers.DT -= 1;
+        }
+
+        if (chip8.registers.ST > 0)
+        {
+            beep(chip8.registers.ST);
+            chip8.registers.ST = 0;
+        }
+        usleep(20 * 1000);
     }
 
     SDL_DestroyRenderer(renderer);
