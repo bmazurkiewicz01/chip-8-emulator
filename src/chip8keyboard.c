@@ -10,11 +10,16 @@ static bool isKeyInBounds(int key)
     return true;
 }
 
-int mapKey(const char *map, char key)
+void setKeyboardMap(struct Chip8Keyboard *keyboard, const char* map)
+{
+    keyboard->keyboardMap = map;
+}
+
+int mapKey(struct Chip8Keyboard *keyboard, char key)
 {
     for (int i = 0; i < CHIP8_TOTAL_KEYS; ++i)
     {
-        if (map[i] == key)
+        if (keyboard->keyboardMap[i] == key)
         {
             return i;
         }

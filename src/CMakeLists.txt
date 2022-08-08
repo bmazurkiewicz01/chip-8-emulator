@@ -9,4 +9,5 @@ target_link_libraries(CHIP8_SOURCE "CHIP8_INCLUDE"
 
 target_include_directories(CHIP8_SOURCE PUBLIC "${PROJECT_SOURCE_DIR}/include"
                                                 "${PROJECT_SOURCE_DIR}/src"
+                                                "${SDL2_INCLUDE_DIRS}"
                                                 )

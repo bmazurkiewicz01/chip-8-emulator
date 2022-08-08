@@ -26,7 +26,7 @@ static void *beepRoutine(void *arg)
             char result[160];
             sprintf(result, "powershell.exe"
                             " -NoProfile -NonInteractive -Command \"[console]::beep(%d, %d)\"",
-                    BEEP_FREQUENCY, 100 * beeper->soundTimerValue);
+                    BEEP_FREQUENCY, 10 * beeper->soundTimerValue);
             system(result);
         }
 

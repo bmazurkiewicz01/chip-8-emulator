@@ -43,13 +43,7 @@ int main(int argc, char **argv)
 
     initChip8(&chip8);
     loadChip8(&chip8, buffer, size);
-
-    chip8.registers.PC = 0x00;
-    chip8.registers.V[0x00] = 200;
-    chip8.registers.V[0x01] = 60;
-    execChip8(&chip8, 0x8015);
-    printf("%i\n", chip8.registers.V[0x00]);
-    printf("%i\n", chip8.registers.V[0x0F]);
+    setKeyboardMap(&chip8.keyboard, keyboardMap);
 
 #if CHIP8_BEEPER_ACTIVE == true
     struct Beeper beeper;
@@ -81,8 +75,7 @@ int main(int argc, char **argv)
             case SDL_KEYDOWN:
             {
                 char key = event.key.keysym.sym;
-                int vKey = mapKey(keyboardMap, key);
-                printf("vKey = %x is down\n", vKey);
+                int vKey = mapKey(&chip8.keyboard, key);
                 if (vKey != -1)
                 {
                     holdKeyDown(&chip8.keyboard, vKey);
@@ -93,8 +86,7 @@ int main(int argc, char **argv)
 
             case SDL_KEYUP:
                 char key = event.key.keysym.sym;
-                int vKey = mapKey(keyboardMap, key);
-                printf("vKey = %x is up\n", vKey);
+                int vKey = mapKey(&chip8.keyboard, key);
                 if (vKey != -1)
                 {
                     releaseKey(&chip8.keyboard, vKey);
@@ -131,7 +123,7 @@ int main(int argc, char **argv)
 
         if (chip8.registers.DT > 0)
         {
-            usleep(100 * 1000);
+            usleep(1 * 1000);
             chip8.registers.DT -= 1;
         }
 
@@ -146,8 +138,6 @@ int main(int argc, char **argv)
         unsigned short opcode = getMemoryAsShort(&chip8.memory, chip8.registers.PC);
         chip8.registers.PC += 2;
         execChip8(&chip8, opcode);
-
-        usleep(20 * 1000);
     }
 
     SDL_DestroyRenderer(renderer);
