@@ -15,19 +15,46 @@ const char keyboardMap[CHIP8_TOTAL_KEYS] = {
 
 int main(int argc, char **argv)
 {
+    const char *fileName = "INVADERS";
+
+    FILE *file = fopen(fileName, "rb");
+    if (!file)
+    {
+        printf("Error: failed to open the file %s\n", fileName);
+        return -1;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    char buffer[size];
+    int result = fread(buffer, size, 1, file);
+    if (result != 1)
+    {
+        printf("Error: failed to read from file %s\n", fileName);
+        return -2;
+    }
+    buffer[size] = '\0';
+    printf("%s\n", buffer);
+
     struct Chip8 chip8;
     bool isRunning = true;
 
     initChip8(&chip8);
-    chip8.registers.ST = 255;
+    loadChip8(&chip8, buffer, size);
 
+    chip8.registers.PC = 0x00;
+    chip8.registers.V[0x00] = 200;
+    chip8.registers.V[0x01] = 60;
+    execChip8(&chip8, 0x8015);
+    printf("%i\n", chip8.registers.V[0x00]);
+    printf("%i\n", chip8.registers.V[0x0F]);
+
+#if CHIP8_BEEPER_ACTIVE == true
     struct Beeper beeper;
     initBeeper(&beeper);
-
-    drawSprite(&chip8.screen, 0, 0, &chip8.memory.memory[0x05], 5);
-    drawSprite(&chip8.screen, 20, 20, &chip8.memory.memory[0x0A], 5);
-    drawSprite(&chip8.screen, 40, 20, &chip8.memory.memory[60], 5);
-    drawSprite(&chip8.screen, 62, 30, &chip8.memory.memory[65], 5);
+#endif
 
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window *window = SDL_CreateWindow(
@@ -108,16 +135,25 @@ int main(int argc, char **argv)
             chip8.registers.DT -= 1;
         }
 
+#if CHIP8_BEEPER_ACTIVE == true
         if (chip8.registers.ST > 0)
         {
             beep(&beeper, chip8.registers.ST);
             chip8.registers.ST = 0;
         }
+#endif
+
+        unsigned short opcode = getMemoryAsShort(&chip8.memory, chip8.registers.PC);
+        chip8.registers.PC += 2;
+        execChip8(&chip8, opcode);
+
         usleep(20 * 1000);
     }
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+#if CHIP8_BEEPER_ACTIVE == true
     destroyBeeper(&beeper);
+#endif
     return 0;
 }

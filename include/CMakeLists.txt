@@ -5,4 +5,5 @@ set_target_properties(CHIP8_INCLUDE PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(CHIP8_INCLUDE PUBLIC "${PROJECT_SOURCE_DIR}/include"
                                                 "${PROJECT_SOURCE_DIR}/src"
+                                                "${PROJECT_SOURCE_DIR}/roms"
                                                 )

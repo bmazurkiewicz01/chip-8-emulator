@@ -18,5 +18,7 @@ struct Chip8
 };
 
 void initChip8(struct Chip8 *chip8);
+void loadChip8(struct Chip8 *chip8, const char *buffer, size_t bufferSize);
+void execChip8(struct Chip8 *chip8, unsigned short opcode);
 
 #endif

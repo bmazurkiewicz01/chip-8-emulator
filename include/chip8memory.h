@@ -9,7 +9,7 @@ struct Chip8Memory
 };
 
 unsigned char getMemory(struct Chip8Memory *memory, int index);
-
+unsigned short getMemoryAsShort(struct Chip8Memory *memory, int index);
 void setMemory(struct Chip8Memory *memory, int index, unsigned char val);
 
 #endif

@@ -25,6 +25,14 @@ unsigned char getMemory(struct Chip8Memory *memory, int index)
     }
 }
 
+unsigned short getMemoryAsShort(struct Chip8Memory *memory, int index)
+{
+    unsigned char byte1 = getMemory(memory, index);
+    unsigned char byte2 = getMemory(memory, index + 1);
+
+    return byte1 << 8 | byte2;
+}
+
 void setMemory(struct Chip8Memory *memory, int index, unsigned char val)
 {
     if (isMemoryInBounds(index))

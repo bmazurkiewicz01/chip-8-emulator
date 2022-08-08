@@ -4,6 +4,9 @@ project(chip_8_emulator LANGUAGES C VERSION 1.0.0)
 
 find_package(SDL2 REQUIRED)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/roms/INVADERS
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 add_executable(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/src/main.c")
 
 add_subdirectory(include)

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <memory.h>
 #include "chip8screen.h"
 
 static bool arePixelsInBounds(int x, int y)
@@ -56,4 +57,9 @@ bool drawSprite(struct Chip8Screen *screen, int x, int y, const char *sprite, in
     }
 
     return isPixelChanged;
+}
+
+void clearScreen(struct Chip8Screen *screen)
+{
+    memset(screen->pixels, 0, sizeof(screen->pixels));
 }
