@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 
         if (chip8.registers.DT > 0)
         {
-            usleep(1 * 1000);
+            usleep(CHIP8_MAIN_DELAY);
             chip8.registers.DT -= 1;
         }
 
@@ -138,6 +138,7 @@ int main(int argc, char **argv)
         unsigned short opcode = getMemoryAsShort(&chip8.memory, chip8.registers.PC);
         chip8.registers.PC += 2;
         execChip8(&chip8, opcode);
+        usleep(CHIP8_LOOP_DELAY);
     }
 
     SDL_DestroyRenderer(renderer);
